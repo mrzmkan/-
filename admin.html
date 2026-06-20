@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>پەنەلی بەڕێوەبردن — ئارشیڤی ئیجازات</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ─── */
+    :root {
+      --ink:        #1a1410;
+      --parchment:  #f7f2e8;
+      --cream:      #fdfaf4;
+      --gold:       #b8860b;
+      --gold-light: #d4a830;
+      --emerald:    #1a5c3a;
+      --emerald-mid:#256e48;
+      --emerald-lt: #e8f4ed;
+      --border:     #d9ceb8;
+      --muted:      #6b5e48;
+      --red:        #b91c1c;
+      --red-lt:     #fee2e2;
+      --blue:       #1d4ed8;
+      --blue-lt:    #dbeafe;
+      --shadow-sm:  0 2px 8px rgba(26,20,16,.08);
+      --shadow-md:  0 6px 24px rgba(26,20,16,.13);
+      --radius:     12px;
+      --radius-sm:  8px;
+      --sidebar-w:  270px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Naskh Arabic', serif;
+      background: var(--parchment);
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ─── SIDEBAR ─── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--emerald);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 200;
+      box-shadow: -4px 0 20px rgba(0,0,0,.15);
+    }
+    .sidebar-logo {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+    .sidebar-logo .icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gold);
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .sidebar-logo h1 {
+      font-family: 'Amiri', serif;
+      font-size: 1.1rem;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .sidebar-logo span {
+      font-size: .75rem;
+      color: rgba(255,255,255,.55);
+    }
+
+    .sidebar-nav {
+      padding: 1rem 0;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .nav-section-label {
+      padding: .6rem 1.25rem .3rem;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: rgba(255,255,255,.4);
+      font-weight: 700;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .7rem 1.25rem;
+      color: rgba(255,255,255,.75);
+      cursor: pointer;
+      transition: all .2s;
+      font-size: .92rem;
+      border-right: 3px solid transparent;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.08); color: #fff; }
+    .nav-item.active {
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border-right-color: var(--gold-light);
+    }
+    .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid rgba(255,255,255,.1);
+      font-size: .8rem;
+      color: rgba(255,255,255,.4);
+    }
+    .sidebar-footer a { color: var(--gold-light); text-decoration: none; }
+
+    /* ─── MAIN CONTENT ─── */
+    .main {
+      margin-right: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ─── TOPBAR ─── */
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar h2 {
+      font-family: 'Amiri', serif;
+      font-size: 1.25rem;
+      color: var(--emerald);
+    }
+    .topbar-actions { display: flex; gap: .75rem; align-items: center; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      padding: .55rem 1.1rem;
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+    .btn-primary   { background: var(--emerald); color: #fff; }
+    .btn-primary:hover { background: var(--emerald-mid); }
+    .btn-gold      { background: var(--gold); color: #fff; }
+    .btn-gold:hover { background: var(--gold-light); }
+    .btn-danger    { background: var(--red); color: #fff; }
+    .btn-danger:hover { background: #991b1b; }
+    .btn-ghost     { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--emerald); color: var(--emerald); background: var(--emerald-lt); }
+    .btn-sm        { padding: .35rem .8rem; font-size: .82rem; }
+    .btn:disabled  { opacity: .5; cursor: not-allowed; }
+
+    /* ─── CONTENT PANELS (tabs) ─── */
+    .panel { display: none; padding: 2rem; max-width: 1100px; }
+    .panel.active { display: block; }
+
+    /* ─── SETTINGS PANEL ─── */
+    .settings-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 640px;
+      margin-bottom: 1.5rem;
+    }
+    .settings-card h3 {
+      font-family: 'Amiri', serif;
+      font-size: 1.3rem;
+      color: var(--emerald);
+      margin-bottom: 1.5rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      display: block;
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: .7rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: .92rem;
+      background: var(--parchment);
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+      direction: rtl;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(26,92,58,.1);
+      background: #fff;
+    }
+    .form-textarea { resize: vertical; min-height: 90px; }
+    /* multi-entry rows (کتێب / مامۆستا) */
+    .multi-entry-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: .5rem;
+      align-items: center;
+      margin-bottom: .45rem;
+    }
+    .multi-entry-row.single-col { grid-template-columns: 1fr auto; }
+    .btn-remove-entry {
+      background: transparent;
+      border: 1px solid var(--danger, #e55);
+      color: var(--danger, #e55);
+      border-radius: 6px;
+      padding: .3rem .55rem;
+      cursor: pointer;
+      font-size: .85rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .btn-remove-entry:hover { background: rgba(220,50,50,.12); }
+    .form-hint {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-top: .35rem;
+      line-height: 1.5;
+    }
+    .form-hint a { color: var(--emerald); }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .3rem .9rem;
+      border-radius: 100px;
+      font-size: .8rem;
+      font-weight: 600;
+    }
+    .status-ok      { background: var(--emerald-lt); color: var(--emerald); }
+    .status-error   { background: var(--red-lt); color: var(--red); }
+    .status-pending { background: #fef3cd; color: #856404; }
+    .conn-status { margin-bottom: 1.25rem; }
+
+    /* ─── SCHOLAR PROFILE CARD ─── */
+    .scholar-form {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 700px;
+    }
+    .scholar-form h3 {
+      font-family: 'Amiri', serif;
+      font-size: 1.25rem;
+      color: var(--emerald);
+      margin-bottom: 1.5rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    /* ─── TABLE ─── */
+    .table-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .table-toolbar {
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .table-search {
+      flex: 1;
+      min-width: 200px;
+      padding: .55rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: .88rem;
+      direction: rtl;
+      background: var(--parchment);
+    }
+    .table-search:focus {
+      outline: none;
+      border-color: var(--emerald);
+      background: #fff;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    thead tr { background: var(--parchment); }
+    th {
+      padding: .75rem 1rem;
+      text-align: right;
+      font-weight: 700;
+      color: var(--muted);
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .85rem 1rem;
+      border-bottom: 1px solid var(--parchment);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--emerald-lt); }
+    .td-book { font-weight: 600; color: var(--ink); }
+    .td-type { white-space: nowrap; }
+    .td-actions { display: flex; gap: .4rem; justify-content: flex-end; }
+    .table-empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 500;
+      display: none;
+      place-items: center;
+      padding: 1.5rem;
+      backdrop-filter: blur(3px);
+    }
+    .modal-overlay.open { display: grid; }
+    .modal-box {
+      background: var(--cream);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 620px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      animation: slideUp .2s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(16px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    .modal-header {
+      background: var(--emerald);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-header h3 { font-family: 'Amiri', serif; color: #fff; font-size: 1.2rem; }
+    .modal-close {
+      background: rgba(255,255,255,.15);
+      border: none;
+      color: #fff;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: grid; place-items: center;
+    }
+    .modal-close:hover { background: rgba(255,255,255,.25); }
+    .modal-body { padding: 1.5rem; }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: .75rem;
+      justify-content: flex-end;
+    }
+
+    /* ─── TOAST ─── */
+    .toast-container {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+      align-items: center;
+      pointer-events: none;
+    }
+    .toast {
+      padding: .75rem 1.5rem;
+      border-radius: 100px;
+      font-size: .88rem;
+      font-weight: 600;
+      box-shadow: 0 4px 16px rgba(0,0,0,.2);
+      animation: toastIn .3s ease;
+      pointer-events: auto;
+    }
+    .toast-success { background: var(--emerald); color: #fff; }
+    .toast-error   { background: var(--red); color: #fff; }
+    .toast-info    { background: #1e40af; color: #fff; }
+    @keyframes toastIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes toastOut {
+      to { transform: translateY(12px); opacity: 0; }
+    }
+
+    /* ─── CONFIRM DIALOG ─── */
+    .confirm-box {
+      background: var(--cream);
+      border-radius: var(--radius);
+      max-width: 400px;
+      width: 100%;
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    .confirm-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .confirm-box h3 { font-family: 'Amiri', serif; font-size: 1.25rem; margin-bottom: .5rem; }
+    .confirm-box p { color: var(--muted); font-size: .9rem; margin-bottom: 1.5rem; }
+    .confirm-btns { display: flex; gap: .75rem; justify-content: center; }
+
+    /* ─── SPINNER ─── */
+    .spinner-inline {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .sidebar { position: relative; width: 100%; min-height: auto; flex-direction: row; overflow-x: auto; }
+      .main { margin-right: 0; }
+      body { flex-direction: column; }
+      .sidebar-nav { display: flex; flex-direction: row; padding: 0; }
+      .nav-section-label { display: none; }
+      .nav-item { padding: .6rem 1rem; border-right: none; border-bottom: 3px solid transparent; }
+      .nav-item.active { border-bottom-color: var(--gold-light); }
+      .sidebar-logo { white-space: nowrap; }
+      .sidebar-footer { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .panel { padding: 1rem; }
+      .topbar { padding: .7rem 1rem; }
+    }
+
+    /* ─── LOGIN SCREEN ─── */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(160deg, var(--emerald) 0%, #0a2e1c 100%);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    #login-screen.hidden { display: none; }
+
+    .login-card {
+      background: var(--cream);
+      border-radius: 18px;
+      padding: 2.75rem 2.25rem 2.25rem;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.35);
+      text-align: center;
+      animation: slideUp .3s ease;
+    }
+    .login-logo {
+      width: 64px;
+      height: 64px;
+      background: var(--emerald);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 8px 24px rgba(26,92,58,.35);
+    }
+    .login-card h1 {
+      font-family: 'Amiri', serif;
+      font-size: 1.55rem;
+      color: var(--emerald);
+      margin-bottom: .3rem;
+    }
+    .login-card p {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+    }
+    .login-field {
+      margin-bottom: 1rem;
+      text-align: right;
+    }
+    .login-field label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+    .login-field input {
+      width: 100%;
+      padding: .75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: .95rem;
+      background: var(--parchment);
+      color: var(--ink);
+      transition: border-color .2s, box-shadow .2s;
+      direction: rtl;
+    }
+    .login-field input:focus {
+      outline: none;
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(26,92,58,.12);
+      background: #fff;
+    }
+    .login-error {
+      background: var(--red-lt);
+      color: var(--red);
+      border-radius: var(--radius-sm);
+      padding: .6rem 1rem;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .login-error.show { display: block; }
+    .btn-login {
+      width: 100%;
+      padding: .85rem;
+      background: var(--emerald);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      margin-top: .5rem;
+    }
+    .btn-login:hover   { background: var(--emerald-mid); }
+    .btn-login:active  { transform: scale(.98); }
+    .btn-login:disabled { opacity: .6; cursor: not-allowed; }
+    .login-footer-note {
+      margin-top: 1.5rem;
+      font-size: .78rem;
+      color: var(--border);
+    }
+
+    /* logout button in topbar */
+    .btn-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .4rem .9rem;
+      background: var(--red-lt);
+      color: var(--red);
+      border: 1.5px solid #fca5a5;
+      border-radius: var(--radius-sm);
+      font-family: 'Noto Naskh Arabic', serif;
+      font-size: .82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-logout:hover { background: var(--red); color: #fff; border-color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════ LOGIN SCREEN ══════════════════ -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-logo">☽</div>
+      <h1>پەنەلی بەڕێوەبردن</h1>
+      <p>ئارشیڤی ئیجازاتی زانایانە</p>
+
+      <div class="login-error" id="login-error">
+        ⚠️ ناوی بەکارهێنەر یان پاسۆرد هەڵەیە
+      </div>
+
+      <div class="login-field">
+        <label for="login-user">ناوی بەکارهێنەر</label>
+        <input type="text" id="login-user" placeholder="ناوی بەکارهێنەر..." autocomplete="username" />
+      </div>
+      <div class="login-field">
+        <label for="login-pass">پاسۆرد</label>
+        <input type="password" id="login-pass" placeholder="پاسۆرد..." autocomplete="current-password" />
+      </div>
+
+      <button class="btn-login" id="btn-login">چوونەژوورەوە →</button>
+
+      <p class="login-footer-note">ئارشیڤی ئیجازاتی زانایانە · کوردستان</p>
+    </div>
+  </div>
+
+  <!-- ══════════════════ SIDEBAR ══════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span class="icon">☽</span>
+      <div>
+        <h1>ئارشیڤی ئیجازات</h1>
+        <span>پەنەلی بەڕێوەبردن</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">پەیجەکان</div>
+      <div class="nav-item active" data-panel="panel-records">
+        <span class="nav-icon">📋</span> ئیجازاتەکان
+      </div>
+      <div class="nav-item" data-panel="panel-scholar">
+        <span class="nav-icon">👤</span> پرۆفایلی زانا
+      </div>
+      <div class="nav-section-label">ڕێکخستن</div>
+      <div class="nav-item" data-panel="panel-settings">
+        <span class="nav-icon">⚙️</span> ڕێکخستنەکان
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="index.html">← بچۆ بۆ مالپەڕ</a>
+    </div>
+  </aside>
+
+  <!-- ══════════════════ MAIN ══════════════════ -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <h2 id="topbar-title">ئیجازاتەکان</h2>
+      <div class="topbar-actions">
+        <span id="topbar-status"></span>
+        <a href="index.html" class="btn btn-ghost btn-sm">← مالپەڕ</a>
+        <button class="btn-logout" id="btn-logout">🚪 دەرچوون</button>
+      </div>
+    </div>
+
+    <!-- ══ PANEL: RECORDS ══ -->
+    <div class="panel active" id="panel-records">
+
+      <div class="table-card">
+        <div class="table-toolbar">
+          <input type="search" class="table-search" id="admin-search" placeholder="گەڕان لە ئیجازاتەکاندا..." />
+          <button class="btn btn-primary" id="btn-add-new">
+            <span>＋</span> زیادکردنی ئیجازە
+          </button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="records-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>ناوی کتێب</th>
+                <th>مامۆستا</th>
+                <th>بەروار (هیجری)</th>
+                <th>جۆری ئیجازە</th>
+                <th>کردارەکان</th>
+              </tr>
+            </thead>
+            <tbody id="records-tbody">
+              <tr><td colspan="6" class="table-empty">بارکردنی زانیاریەکان...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PANEL: SCHOLAR ══ -->
+    <div class="panel" id="panel-scholar">
+      <div class="scholar-form">
+        <h3>👤 زانیاری پرۆفایلی زانا</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">ناوی تەواو</label>
+            <input type="text" class="form-input" id="sch-name" placeholder="ناوی زانا..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">پلەی زانستی</label>
+            <input type="text" class="form-input" id="sch-title" placeholder="زانای قورئانی..." />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">باسی کورت</label>
+          <textarea class="form-textarea" id="sch-bio" rows="4" placeholder="باسی کورت دەربارەی زانا..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">شوێن</label>
+            <input type="text" class="form-input" id="sch-location" placeholder="شار، وڵات..." />
+          </div>
+          <div class="form-group">
+            <label class="form-label">پسپۆڕی</label>
+            <input type="text" class="form-input" id="sch-specialization" placeholder="پسپۆڕی زانستی..." />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">بەستەری وێنە (ئارەزوومەندانە)</label>
+          <input type="url" class="form-input" id="sch-photo" placeholder="https://..." />
+        </div>
+        <button class="btn btn-primary" id="btn-save-scholar">💾 پاشەکەوتکردنی پرۆفایل</button>
+      </div>
+    </div>
+
+    <!-- ══ PANEL: SETTINGS ══ -->
+    <div class="panel" id="panel-settings">
+
+      <div class="settings-card">
+        <h3>🔑 ڕێکخستنی GitHub</h3>
+        <div class="conn-status" id="conn-status"></div>
+
+        <div class="form-group">
+          <label class="form-label">خاوەنی ڕیپۆزتری GitHub (Username)</label>
+          <input type="text" class="form-input" id="cfg-owner" placeholder="your-github-username" dir="ltr" />
+          <p class="form-hint">ناوی بەکارهێنەرت لەسەر GitHub (نمونە: <code>ahmad-dev</code>)</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ناوی ڕیپۆزتری</label>
+          <input type="text" class="form-input" id="cfg-repo" placeholder="my-repo-name" dir="ltr" />
+          <p class="form-hint">ناوی ڕیپۆزتری کە مالپەڕەکەت تێدایە</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">ناوی فایلی داتا</label>
+          <input type="text" class="form-input" id="cfg-file" value="data.json" dir="ltr" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">GitHub Personal Access Token (PAT)
+            <span style="color:var(--red);font-weight:400;"> — پێویستە</span>
+          </label>
+          <input type="password" class="form-input" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" dir="ltr" autocomplete="off" />
+          <p class="form-hint">
+            تۆکێنی دەستڕاگەیشتن دروستبکە لە
+            <a href="https://github.com/settings/tokens/new" target="_blank">GitHub → Settings → Developer settings → Personal Access Tokens → Tokens (classic)</a><br/>
+            پێویستە <strong>repo</strong> چێکباندرێت (خانەی <code>repo</code> تیک بکەوە).
+            تۆکێنەکە تەنها یەکجار نیشاندەدرێت — کۆپیش بکە.
+          </p>
+        </div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btn-save-settings">💾 پاشەکەوتکردن</button>
+          <button class="btn btn-ghost" id="btn-test-conn">🔗 تاقیکردنەوەی بەستەر</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h3>ℹ️ ئامۆژگاری دامەزراندن</h3>
+        <div style="line-height:2.2;font-size:.9rem;color:var(--muted);">
+          <p><strong style="color:var(--ink);">١. دروستکردنی GitHub PAT:</strong><br/>
+          بچۆ بۆ GitHub → Settings → Developer Settings → Personal Access Tokens → Generate New Token.<br/>
+          پاشان چێکی <code style="background:var(--parchment);padding:1px 6px;border-radius:4px;">repo</code> بکەوە و تۆکێن بکۆپی.</p>
+          <p><strong style="color:var(--ink);">٢. ڕێکخستنی:</strong><br/>
+          ناوی بەکارهێنەر، ناوی ڕیپۆزتری و تۆکێنت دابنێ لە سەرەوە، پاشان پاشەکەوتبکە.</p>
+          <p><strong style="color:var(--ink);">٣. تاقیکردنەوە:</strong><br/>
+          دوگمەی "تاقیکردنەوەی بەستەر" دابگرە بۆ دڵنیابوون لە دووستی GitHub.</p>
+          <p><strong style="color:var(--ink);">٤. بەرێوەبردن:</strong><br/>
+          ئیجازەکان زیادبکە، دەستکاری بکە یان بسڕەوە. هەموو گۆڕانکارییەک خۆکارانە بۆ فایلی <code>data.json</code> لە GitHub دەگات.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ══ MODAL: ADD/EDIT RECORD ══ -->
+  <div class="modal-overlay" id="record-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="record-modal-title">زیادکردنی ئیجازەی نوێ</h3>
+        <button class="modal-close" id="record-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="rec-id" />
+
+        <!-- ═══ کتێبەکان ═══ -->
+        <div class="form-group">
+          <label class="form-label">کتێب(ەکان) * <span style="font-size:.78rem;font-weight:400;color:var(--muted);">— یەک یان زیاتر</span></label>
+          <div id="books-list"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-add-book" style="margin-top:.4rem;">＋ زیادکردنی کتێبی دیکە</button>
+        </div>
+
+        <!-- ═══ مامۆستاکان ═══ -->
+        <div class="form-group">
+          <label class="form-label">مامۆستا(کان) * <span style="font-size:.78rem;font-weight:400;color:var(--muted);">— یەک یان زیاتر</span></label>
+          <div id="teachers-list"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-add-teacher" style="margin-top:.4rem;">＋ زیادکردنی مامۆستای دیکە</button>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">بەروار (هیجری)</label>
+            <input type="text" class="form-input" id="rec-hijri" placeholder="١٤٤٢/٠١/١٥" dir="rtl" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">بەروار (زایینی)</label>
+            <input type="date" class="form-input" id="rec-gregorian" dir="ltr" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">جۆری ئیجازە *</label>
+          <select class="form-select" id="rec-type">
+            <option value="">— جۆر هەڵبژێرە —</option>
+            <option value="ئیجازەی گشتی">ئیجازەی گشتی</option>
+            <option value="ئیجازەی تەخصوصی">ئیجازەی تەخصوصی</option>
+            <option value="ئیجازەی بەبرواری">ئیجازەی بەبرواری</option>
+            <option value="ئیجازەی ئاواستە">ئیجازەی ئاواستە</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">تێبینی</label>
+          <textarea class="form-textarea" id="rec-notes" rows="3" placeholder="تێبینی یان زانیاری زیادە..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="record-modal-cancel">پاشگەزبوون</button>
+        <button class="btn btn-primary" id="btn-save-record">
+          <span id="save-btn-icon">💾</span>
+          <span id="save-btn-text">پاشەکەوتکردن</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CONFIRM MODAL ══ -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="confirm-box">
+      <div class="confirm-icon">⚠️</div>
+      <h3>دڵنیابوون</h3>
+      <p id="confirm-msg">ئایا دڵنیایت کە ئەم تۆمارەت بسڕیتەوە؟ ئەم کردارە ناگەڕێتەوە.</p>
+      <div class="confirm-btns">
+        <button class="btn btn-ghost" id="confirm-cancel">نەخێر</button>
+        <button class="btn btn-danger" id="confirm-ok">بەڵێ، بسڕەوە</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TOAST CONTAINER ══ -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+  // ═══════════════════════════════════════════════════════════
+  //  LOGIN
+  // ═══════════════════════════════════════════════════════════
+  const AUTH_USER = 'admin';
+  const AUTH_PASS = 'arkanhikma';
+
+  function isLoggedIn() {
+    return sessionStorage.getItem('ijazah_auth') === '1';
+  }
+
+  function showLoginScreen() {
+    document.getElementById('login-screen').classList.remove('hidden');
+  }
+
+  function hideLoginScreen() {
+    document.getElementById('login-screen').classList.add('hidden');
+  }
+
+  function doLogout() {
+    sessionStorage.removeItem('ijazah_auth');
+    // clear form so credentials aren't cached visually
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-error').classList.remove('show');
+    showLoginScreen();
+  }
+
+  document.getElementById('btn-login').addEventListener('click', attemptLogin);
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') attemptLogin();
+  });
+  document.getElementById('login-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+  document.getElementById('btn-logout').addEventListener('click', doLogout);
+
+  function attemptLogin() {
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const errEl = document.getElementById('login-error');
+    const btn   = document.getElementById('btn-login');
+
+    if (user === AUTH_USER && pass === AUTH_PASS) {
+      sessionStorage.setItem('ijazah_auth', '1');
+      errEl.classList.remove('show');
+      btn.textContent = '✅ چوونەژووەرەوە...';
+      setTimeout(() => {
+        hideLoginScreen();
+        init();
+      }, 350);
+    } else {
+      errEl.classList.add('show');
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+      // Shake animation
+      const card = document.querySelector('.login-card');
+      card.style.animation = 'none';
+      card.offsetHeight; // reflow
+      card.style.animation = 'shake .4s ease';
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  STORAGE HELPERS  (sessionStorage only for config — no data)
+  // ═══════════════════════════════════════════════════════════
+  const CFG_KEY   = 'ijazah_cfg';    // localStorage — مانەوەی درێژخایەن
+  const TOKEN_KEY = 'ijazah_token';  // sessionStorage — تەنها بۆ ئەم تابە
+
+  function loadConfig() {
+    try {
+      const base  = JSON.parse(localStorage.getItem(CFG_KEY) || '{}');
+      // تۆکێن لە sessionStorage دەخوێنرێتەوە
+      const token = sessionStorage.getItem(TOKEN_KEY) || '';
+      return { ...base, token };
+    } catch { return {}; }
+  }
+  function saveConfig(cfg) {
+    const { token, ...rest } = cfg;
+    localStorage.setItem(CFG_KEY, JSON.stringify(rest));
+    if (token) sessionStorage.setItem(TOKEN_KEY, token);
+  }
+
+  let cfg = loadConfig();
+
+  // ═══════════════════════════════════════════════════════════
+  //  STATE
+  // ═══════════════════════════════════════════════════════════
+  let allData    = { scholar: {}, ijazat: [] };
+  let fileSHA    = '';          // needed for GitHub API PUT
+  let editingId  = null;
+  let pendingDeleteId = null;
+
+  // ═══════════════════════════════════════════════════════════
+  //  TABS
+  // ═══════════════════════════════════════════════════════════
+  const PANEL_TITLES = {
+    'panel-records':  'ئیجازاتەکان',
+    'panel-scholar':  'پرۆفایلی زانا',
+    'panel-settings': 'ڕێکخستنەکان',
+  };
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      item.classList.add('active');
+      const panelId = item.dataset.panel;
+      document.getElementById(panelId).classList.add('active');
+      document.getElementById('topbar-title').textContent = PANEL_TITLES[panelId] || '';
+    });
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  SETTINGS PANEL
+  // ═══════════════════════════════════════════════════════════
+  function populateSettingsForm() {
+    setVal('cfg-owner', cfg.owner || '');
+    setVal('cfg-repo',  cfg.repo  || '');
+    setVal('cfg-file',  cfg.file  || 'data.json');
+    setVal('cfg-token', cfg.token || '');
+    updateConnStatus(null);
+  }
+
+  document.getElementById('btn-save-settings').addEventListener('click', () => {
+    cfg = {
+      owner: getVal('cfg-owner').trim(),
+      repo:  getVal('cfg-repo').trim(),
+      file:  getVal('cfg-file').trim() || 'data.json',
+      token: getVal('cfg-token').trim(),
+    };
+    saveConfig(cfg);
+    toast('✅ ڕێکخستنەکان پاشەکەوتکران', 'success');
+  });
+
+  document.getElementById('btn-test-conn').addEventListener('click', async () => {
+    cfg = {
+      owner: getVal('cfg-owner').trim(),
+      repo:  getVal('cfg-repo').trim(),
+      file:  getVal('cfg-file').trim() || 'data.json',
+      token: getVal('cfg-token').trim(),
+    };
+    if (!cfg.owner || !cfg.repo || !cfg.token) {
+      toast('⚠️ تکایە هەموو خانەکان پرکەوە', 'error');
+      return;
+    }
+    updateConnStatus('pending');
+    try {
+      await fetchDataFromGitHub();
+      updateConnStatus('ok');
+      toast('✅ بەستەر دروستە!', 'success');
+      renderTable();
+    } catch (e) {
+      updateConnStatus('error');
+      toast('❌ هەڵە: ' + e.message, 'error');
+    }
+  });
+
+  function updateConnStatus(state) {
+    const el = document.getElementById('conn-status');
+    if (!state)         { el.innerHTML = ''; return; }
+    if (state === 'ok') { el.innerHTML = '<span class="status-badge status-ok">✅ بەستەر دروستە</span>'; return; }
+    if (state === 'error') { el.innerHTML = '<span class="status-badge status-error">❌ هەڵەی بەستەر</span>'; return; }
+    el.innerHTML = '<span class="status-badge status-pending">⏳ تاقیکردنەوە...</span>';
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  GITHUB API
+  // ═══════════════════════════════════════════════════════════
+  function githubHeaders() {
+    return {
+      'Authorization': `token ${cfg.token}`,
+      'Accept':        'application/vnd.github.v3+json',
+      'Content-Type':  'application/json',
+    };
+  }
+
+  async function fetchDataFromGitHub() {
+    if (!cfg.owner || !cfg.repo || !cfg.token) {
+      throw new Error('ڕێکخستنەکان ناقەدن. تکایە پێشەکە GitHub رێکبخە.');
+    }
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`;
+    const res  = await fetch(url, { headers: githubHeaders() });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `GitHub API error ${res.status}`);
+    }
+    const json = await res.json();
+    fileSHA    = json.sha;
+    const raw  = atob(json.content.replace(/\s/g, ''));
+    allData    = JSON.parse(raw);
+    return allData;
+  }
+
+  async function pushDataToGitHub(commitMsg = 'Update data.json via admin panel') {
+    if (!cfg.owner || !cfg.repo || !cfg.token) {
+      throw new Error('ڕێکخستنەکان ناقەدن.');
+    }
+    const url     = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(allData, null, 2))));
+    const body    = { message: commitMsg, content, sha: fileSHA };
+    const res     = await fetch(url, { method: 'PUT', headers: githubHeaders(), body: JSON.stringify(body) });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `GitHub API error ${res.status}`);
+    }
+    const json = await res.json();
+    fileSHA    = json.content.sha;   // update SHA for next write
+    return json;
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  TABLE RENDER
+  // ═══════════════════════════════════════════════════════════
+  function renderTable(filter = '') {
+    const tbody = document.getElementById('records-tbody');
+    const f = filter.toLowerCase();
+
+    function itemMatchesFilter(i) {
+      if (!f) return true;
+      const books    = i.books    ? i.books.join(' ')                          : (i.bookName    || '');
+      const teachers = i.teachers ? i.teachers.map(t => t.name + ' ' + (t.location||'')).join(' ') : ((i.teacherName||'') + ' ' + (i.teacherLocation||''));
+      return books.toLowerCase().includes(f) || teachers.toLowerCase().includes(f);
+    }
+
+    const items = allData.ijazat.filter(itemMatchesFilter);
+
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="6" class="table-empty">
+        ${filter ? 'ئیجازەیەک نەدوزرایەوە.' : 'هیچ ئیجازەیەک نیە. یەکێک زیاد بکە!'}</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map((item, idx) => {
+      // کتێبەکان
+      const bookList = (item.books && item.books.length)
+        ? item.books.map(b => `<span style="display:block;">${escHtml(b)}</span>`).join('')
+        : escHtml(item.bookName || '---');
+
+      // مامۆستاکان
+      const teacherList = (item.teachers && item.teachers.length)
+        ? item.teachers.map(t =>
+            `<span style="display:block;">${escHtml(t.name)}${t.location ? ` <span style="color:var(--muted);font-size:.8rem;">(${escHtml(t.location)})</span>` : ''}</span>`
+          ).join('')
+        : `${escHtml(item.teacherName || '---')}${item.teacherLocation ? ` <span style="color:var(--muted);font-size:.8rem;">(${escHtml(item.teacherLocation)})</span>` : ''}`;
+
+      return `
+      <tr>
+        <td style="color:var(--muted);font-size:.8rem;">${idx + 1}</td>
+        <td class="td-book">${bookList}</td>
+        <td>${teacherList}</td>
+        <td style="direction:rtl;">${item.hijriDate || '---'}</td>
+        <td class="td-type"><span class="status-badge status-ok" style="font-size:.75rem;">${escHtml(item.ijazahType || '---')}</span></td>
+        <td>
+          <div class="td-actions">
+            <button class="btn btn-ghost btn-sm" onclick="openEditModal('${item.id}')">✏️ دەستکاری</button>
+            <button class="btn btn-danger btn-sm"  onclick="confirmDelete('${item.id}')">🗑️ سڕینەوە</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('admin-search').addEventListener('input', e => {
+    renderTable(e.target.value);
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  SCHOLAR FORM
+  // ═══════════════════════════════════════════════════════════
+  function populateScholarForm() {
+    const s = allData.scholar || {};
+    setVal('sch-name',           s.name           || '');
+    setVal('sch-title',          s.title          || '');
+    setVal('sch-bio',            s.bio            || '');
+    setVal('sch-location',       s.location       || '');
+    setVal('sch-specialization', s.specialization || '');
+    setVal('sch-photo',          s.photo          || '');
+  }
+
+  document.getElementById('btn-save-scholar').addEventListener('click', async () => {
+    allData.scholar = {
+      name:           getVal('sch-name'),
+      title:          getVal('sch-title'),
+      bio:            getVal('sch-bio'),
+      location:       getVal('sch-location'),
+      specialization: getVal('sch-specialization'),
+      photo:          getVal('sch-photo'),
+    };
+    await saveThenToast('بەروارکردنی پرۆفایلی زانا', 'پرۆفایلی زانا تازەکرایەوە ✅');
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  MULTI-ENTRY HELPERS (کتێب / مامۆستا)
+  // ═══════════════════════════════════════════════════════════
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function addBookRow(name = '') {
+    const list = document.getElementById('books-list');
+    const row  = document.createElement('div');
+    row.className = 'multi-entry-row single-col';
+    row.innerHTML = `
+      <input type="text" class="form-input book-name-input" placeholder="ناوی کتێب بنووسە..." value="${escHtml(name)}" />
+      <button type="button" class="btn-remove-entry" title="سڕینەوە">✕</button>`;
+    row.querySelector('.btn-remove-entry').addEventListener('click', () => {
+      if (document.querySelectorAll('#books-list .multi-entry-row').length > 1) row.remove();
+    });
+    list.appendChild(row);
+  }
+
+  function addTeacherRow(name = '', loc = '') {
+    const list = document.getElementById('teachers-list');
+    const row  = document.createElement('div');
+    row.className = 'multi-entry-row';
+    row.innerHTML = `
+      <input type="text" class="form-input teacher-name-input" placeholder="شێخ / مامۆستا..." value="${escHtml(name)}" />
+      <input type="text" class="form-input teacher-loc-input"  placeholder="وڵات / شار..."    value="${escHtml(loc)}"  />
+      <button type="button" class="btn-remove-entry" title="سڕینەوە">✕</button>`;
+    row.querySelector('.btn-remove-entry').addEventListener('click', () => {
+      if (document.querySelectorAll('#teachers-list .multi-entry-row').length > 1) row.remove();
+    });
+    list.appendChild(row);
+  }
+
+  function getBooksFromForm() {
+    return [...document.querySelectorAll('#books-list .book-name-input')]
+      .map(i => i.value.trim()).filter(Boolean);
+  }
+
+  function getTeachersFromForm() {
+    return [...document.querySelectorAll('#teachers-list .multi-entry-row')].map(row => ({
+      name:     row.querySelector('.teacher-name-input').value.trim(),
+      location: row.querySelector('.teacher-loc-input').value.trim(),
+    })).filter(t => t.name);
+  }
+
+  document.getElementById('btn-add-book').addEventListener('click',    () => addBookRow());
+  document.getElementById('btn-add-teacher').addEventListener('click', () => addTeacherRow());
+
+  // ═══════════════════════════════════════════════════════════
+  //  RECORD MODAL
+  // ═══════════════════════════════════════════════════════════
+  function openAddModal() {
+    editingId = null;
+    document.getElementById('record-modal-title').textContent = 'زیادکردنی ئیجازەی نوێ';
+    clearRecordForm();
+    openModal('record-modal');
+  }
+
+  function openEditModal(id) {
+    editingId = id;
+    const item = allData.ijazat.find(i => i.id === id);
+    if (!item) return;
+    document.getElementById('record-modal-title').textContent = 'دەستکاریکردنی ئیجازە';
+    setVal('rec-id',        item.id          || '');
+    setVal('rec-hijri',     item.hijriDate   || '');
+    setVal('rec-gregorian', item.gregorianDate || '');
+    setVal('rec-type',      item.ijazahType  || '');
+    setVal('rec-notes',     item.notes       || '');
+
+    // کتێبەکان — پشتگیری هەردوو مۆدێل (books[] یان bookName)
+    document.getElementById('books-list').innerHTML = '';
+    const books = item.books && item.books.length
+      ? item.books
+      : (item.bookName ? [item.bookName] : ['']);
+    books.forEach(b => addBookRow(b));
+
+    // مامۆستاکان — پشتگیری هەردوو مۆدێل (teachers[] یان teacherName)
+    document.getElementById('teachers-list').innerHTML = '';
+    const teachers = item.teachers && item.teachers.length
+      ? item.teachers
+      : (item.teacherName ? [{ name: item.teacherName, location: item.teacherLocation || '' }] : [{ name: '', location: '' }]);
+    teachers.forEach(t => addTeacherRow(t.name, t.location));
+
+    openModal('record-modal');
+  }
+
+  function clearRecordForm() {
+    ['rec-id','rec-hijri','rec-gregorian','rec-type','rec-notes'].forEach(id => setVal(id, ''));
+    document.getElementById('books-list').innerHTML    = '';
+    document.getElementById('teachers-list').innerHTML = '';
+    addBookRow();
+    addTeacherRow();
+  }
+
+  document.getElementById('btn-add-new').addEventListener('click', openAddModal);
+
+  document.getElementById('btn-save-record').addEventListener('click', async () => {
+    const books    = getBooksFromForm();
+    const teachers = getTeachersFromForm();
+    const type     = getVal('rec-type').trim();
+
+    if (!books.length || !teachers.length || !type) {
+      toast('⚠️ خانەی ستێرەدار پرکەوە (کتێب، مامۆستا، جۆر)', 'error');
+      return;
+    }
+
+    setBtnLoading('btn-save-record', true);
+    try {
+      const record = {
+        id:            editingId || Date.now().toString(),
+        // مۆدێلی نوێ
+        books,
+        teachers,
+        // پشتگیری پێشووی — تەنها یەکەم تۆمار
+        bookName:        books[0],
+        teacherName:     teachers[0].name,
+        teacherLocation: teachers[0].location,
+        hijriDate:       getVal('rec-hijri').trim(),
+        gregorianDate:   getVal('rec-gregorian').trim(),
+        ijazahType:      type,
+        notes:           getVal('rec-notes').trim(),
+      };
+
+      if (editingId) {
+        const idx = allData.ijazat.findIndex(i => i.id === editingId);
+        if (idx !== -1) allData.ijazat[idx] = record;
+      } else {
+        allData.ijazat.push(record);
+      }
+
+      const bookLabel = books.length > 1 ? `${books[0]} (+${books.length - 1})` : books[0];
+      await pushDataToGitHub(editingId ? `ویرایش ئیجازە: ${bookLabel}` : `زیادکردنی ئیجازە: ${bookLabel}`);
+      closeModal('record-modal');
+      renderTable();
+      toast(editingId ? '✅ ئیجازەکە نوێکرایەوە' : '✅ ئیجازەی نوێ زیادکرا', 'success');
+      editingId = null;
+    } catch (e) {
+      toast('❌ هەڵە: ' + e.message, 'error');
+    } finally {
+      setBtnLoading('btn-save-record', false);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  DELETE
+  // ═══════════════════════════════════════════════════════════
+  function confirmDelete(id) {
+    pendingDeleteId = id;
+    openModal('confirm-modal');
+  }
+
+  document.getElementById('confirm-ok').addEventListener('click', async () => {
+    if (!pendingDeleteId) return;
+    closeModal('confirm-modal');
+    try {
+      const item = allData.ijazat.find(i => i.id === pendingDeleteId);
+      allData.ijazat = allData.ijazat.filter(i => i.id !== pendingDeleteId);
+      await pushDataToGitHub(`سڕینەوەی ئیجازە: ${item?.bookName || pendingDeleteId}`);
+      renderTable();
+      toast('🗑️ ئیجازەکە سڕایەوە', 'success');
+    } catch (e) {
+      toast('❌ هەڵە: ' + e.message, 'error');
+      // rollback in memory
+      await fetchDataFromGitHub();
+      renderTable();
+    }
+    pendingDeleteId = null;
+  });
+
+  document.getElementById('confirm-cancel').addEventListener('click', () => {
+    closeModal('confirm-modal');
+    pendingDeleteId = null;
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  MODAL HELPERS
+  // ═══════════════════════════════════════════════════════════
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('record-modal-close').addEventListener('click',  () => closeModal('record-modal'));
+  document.getElementById('record-modal-cancel').addEventListener('click', () => closeModal('record-modal'));
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      ['record-modal','confirm-modal'].forEach(id => closeModal(id));
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════
+  //  SAVE WITH TOAST
+  // ═══════════════════════════════════════════════════════════
+  async function saveThenToast(commitMsg, successMsg) {
+    try {
+      await pushDataToGitHub(commitMsg);
+      toast('✅ ' + successMsg, 'success');
+    } catch (e) {
+      toast('❌ هەڵە: ' + e.message, 'error');
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  TOAST
+  // ═══════════════════════════════════════════════════════════
+  function toast(msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const el        = document.createElement('div');
+    el.className    = `toast toast-${type}`;
+    el.textContent  = msg;
+    container.appendChild(el);
+    setTimeout(() => {
+      el.style.animation = 'toastOut .3s ease forwards';
+      setTimeout(() => el.remove(), 300);
+    }, 3500);
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  FORM UTILS
+  // ═══════════════════════════════════════════════════════════
+  function getVal(id) {
+    const el = document.getElementById(id);
+    return el ? el.value : '';
+  }
+  function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  function setBtnLoading(id, loading) {
+    const btn     = document.getElementById(id);
+    const iconEl  = document.getElementById('save-btn-icon');
+    const textEl  = document.getElementById('save-btn-text');
+    btn.disabled  = loading;
+    if (iconEl) iconEl.innerHTML = loading ? '<span class="spinner-inline"></span>' : '💾';
+    if (textEl) textEl.textContent = loading ? 'پاشەکەوتکردن...' : 'پاشەکەوتکردن';
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  TOPBAR STATUS
+  // ═══════════════════════════════════════════════════════════
+  function showTopbarStatus() {
+    const el = document.getElementById('topbar-status');
+    if (cfg.owner && cfg.repo && cfg.token) {
+      el.innerHTML = `<span class="status-badge status-ok" style="font-size:.78rem;">✅ ${cfg.owner}/${cfg.repo}</span>`;
+    } else {
+      el.innerHTML = `<span class="status-badge status-error" style="font-size:.78rem;">⚠️ ڕێکخستن ناقەدن</span>`;
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════
+  //  BOOT
+  // ═══════════════════════════════════════════════════════════
+  async function init() {
+    populateSettingsForm();
+    showTopbarStatus();
+
+    if (cfg.owner && cfg.repo && cfg.token) {
+      try {
+        await fetchDataFromGitHub();
+        renderTable();
+        populateScholarForm();
+        toast('✅ داتا بارکرا', 'success');
+      } catch (e) {
+        toast('⚠️ هەڵەی بارکردن: ' + e.message, 'error');
+        // Attempt to load local data.json as fallback
+        try {
+          const res = await fetch('./data.json');
+          allData   = await res.json();
+          renderTable();
+          populateScholarForm();
+        } catch {}
+      }
+    } else {
+      // load local fallback so table isn't empty
+      try {
+        const res = await fetch('./data.json');
+        allData   = await res.json();
+        renderTable();
+        populateScholarForm();
+      } catch {}
+      toast('⚙️ تکایە GitHub رێکبخە لە ڕێکخستنەکان', 'info');
+      // Auto-navigate to settings
+      document.querySelector('[data-panel="panel-settings"]').click();
+    }
+  }
+
+  // ─── BOOT: check login first ───
+  if (!isLoggedIn()) {
+    showLoginScreen();
+  } else {
+    hideLoginScreen();
+    init();
+  }
+  </script>
+
+  <style>
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-5px); }
+      80%      { transform: translateX(5px); }
+    }
+  </style>
+</body>
+</html>
