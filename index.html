@@ -669,11 +669,13 @@
 
   <script>
   // ═══════════════════════════════════════════════════════════════
-  //  CONFIG — update these to your GitHub repo details
+  //  CONFIG — خوێندنەوەی ئۆتۆماتیکی لە localStorage (ئەدمین پەنەل دانیدەنێت)
   // ═══════════════════════════════════════════════════════════════
-  const REPO_OWNER  = 'YOUR_GITHUB_USERNAME';
-  const REPO_NAME   = 'YOUR_REPO_NAME';
-  const DATA_FILE   = 'data.json';
+  const CFG_KEY   = 'ijazah_cfg';
+  const _cfg      = (() => { try { return JSON.parse(localStorage.getItem(CFG_KEY) || '{}'); } catch { return {}; } })();
+  const REPO_OWNER = _cfg.owner || '';
+  const REPO_NAME  = _cfg.repo  || '';
+  const DATA_FILE  = _cfg.file  || 'data.json';
 
   // ═══════════════════════════════════════════════════════════════
   //  STATE
@@ -687,22 +689,29 @@
   // ═══════════════════════════════════════════════════════════════
   async function init() {
     try {
-      // Try GitHub API first, fall back to local data.json
-      const githubUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
       let data;
 
-      try {
-        const res = await fetch(githubUrl, {
-          headers: { 'Accept': 'application/vnd.github.v3.raw' }
-        });
-        if (res.ok) {
+      if (REPO_OWNER && REPO_NAME) {
+        // GitHub API — هەمیشە تازەترین داتا، بەبێ cache
+        const githubUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
+        try {
+          const res = await fetch(githubUrl, {
+            headers: { 'Accept': 'application/vnd.github.v3.raw' },
+            cache: 'no-store',
+          });
+          if (res.ok) {
+            data = await res.json();
+          } else {
+            throw new Error('github api ' + res.status);
+          }
+        } catch {
+          // فالبەک: data.json بە cache-bust
+          const res = await fetch(`./data.json?_=${Date.now()}`);
           data = await res.json();
-        } else {
-          throw new Error('github fallback');
         }
-      } catch {
-        // Fall back to local data.json (works for development or GitHub Pages same-origin)
-        const res = await fetch('./data.json');
+      } else {
+        // config نیە — پەیوەندی راستەوخۆ بە data.json بە cache-bust
+        const res = await fetch(`./data.json?_=${Date.now()}`);
         data = await res.json();
       }
 
@@ -717,7 +726,7 @@
         <div class="empty-state">
           <div class="empty-icon">⚠️</div>
           <h3>هەڵەی بارکردن</h3>
-          <p>نەتوانرا فایلی داتا بارکرێت. تکایە REPO_OWNER و REPO_NAME رێکبخە.</p>
+          <p>نەتوانرا فایلی داتا بارکرێت.</p>
         </div>`;
     }
   }
@@ -746,11 +755,19 @@
   //  STATS
   // ═══════════════════════════════════════════════════════════════
   function updateStats(items) {
-    const teachers = new Set(items.map(i => i.teacherName)).size;
-    const books    = new Set(items.map(i => i.bookName)).size;
+    // پشتگیری هەردوو مۆدێل: books[] و bookName
+    const teacherSet = new Set();
+    const bookSet    = new Set();
+    items.forEach(i => {
+      if (i.teachers && i.teachers.length) i.teachers.forEach(t => t.name && teacherSet.add(t.name));
+      else if (i.teacherName) teacherSet.add(i.teacherName);
+
+      if (i.books && i.books.length) i.books.forEach(b => b && bookSet.add(b));
+      else if (i.bookName) bookSet.add(i.bookName);
+    });
     document.getElementById('count-total').textContent    = toArabicNum(allIjazat.length);
-    document.getElementById('count-teachers').textContent = toArabicNum(teachers);
-    document.getElementById('count-books').textContent    = toArabicNum(books);
+    document.getElementById('count-teachers').textContent = toArabicNum(teacherSet.size);
+    document.getElementById('count-books').textContent    = toArabicNum(bookSet.size);
     document.getElementById('badge-count').textContent    = toArabicNum(items.length);
   }
 
@@ -785,18 +802,31 @@
   function cardHTML(item) {
     const typeClass = getTypeClass(item.ijazahType);
     const notes     = item.notes ? `<div class="card-notes">💬 ${item.notes}</div>` : '';
+
+    // کتێبەکان
+    const bookDisplay = (item.books && item.books.length)
+      ? item.books.join(' · ')
+      : (item.bookName || '---');
+
+    // مامۆستاکان
+    const teacherDisplay = (item.teachers && item.teachers.length)
+      ? item.teachers.map(t => t.name + (t.location ? ` (${t.location})` : '')).join(' · ')
+      : ((item.teacherName || '---') + (item.teacherLocation ? ` (${item.teacherLocation})` : ''));
+
+    // سەرناوی کارتەکە — یەکەمی کتێب
+    const mainBook = (item.books && item.books.length) ? item.books[0] : (item.bookName || '---');
+
     return `
       <div class="ijazah-card" data-id="${item.id}">
         <div class="card-header">
           <div class="card-book-icon">📖</div>
-          <div class="card-title">${item.bookName || '---'}</div>
+          <div class="card-title">${mainBook}${(item.books && item.books.length > 1) ? ` <span style="font-size:.75rem;color:var(--muted);">(+${item.books.length - 1})</span>` : ''}</div>
           <span class="card-type-badge ${typeClass}">${item.ijazahType || '---'}</span>
         </div>
         <div class="card-meta">
           <div class="meta-row">
             <span class="meta-icon">👨‍🏫</span>
-            <span><strong>${item.teacherName || '---'}</strong></span>
-            ${item.teacherLocation ? `<span>— ${item.teacherLocation}</span>` : ''}
+            <span><strong>${teacherDisplay}</strong></span>
           </div>
           ${item.hijriDate ? `
           <div class="meta-row">
@@ -830,14 +860,16 @@
     }
 
     if (q) {
-      result = result.filter(i =>
-        (i.bookName     || '').toLowerCase().includes(q) ||
-        (i.teacherName  || '').toLowerCase().includes(q) ||
-        (i.hijriDate    || '').includes(q) ||
-        (i.gregorianDate|| '').includes(q) ||
-        (i.ijazahType   || '').toLowerCase().includes(q) ||
-        (i.notes        || '').toLowerCase().includes(q)
-      );
+      result = result.filter(i => {
+        const books    = i.books    ? i.books.join(' ')                                          : (i.bookName    || '');
+        const teachers = i.teachers ? i.teachers.map(t => t.name + ' ' + (t.location||'')).join(' ') : ((i.teacherName||'') + ' ' + (i.teacherLocation||''));
+        return books.toLowerCase().includes(q) ||
+               teachers.toLowerCase().includes(q) ||
+               (i.hijriDate    || '').includes(q) ||
+               (i.gregorianDate|| '').includes(q) ||
+               (i.ijazahType   || '').toLowerCase().includes(q) ||
+               (i.notes        || '').toLowerCase().includes(q);
+      });
     }
 
     filteredData = result;
@@ -871,17 +903,34 @@
     const item = allIjazat.find(i => i.id === id);
     if (!item) return;
 
-    document.getElementById('modal-book-title').textContent = item.bookName || '';
+    // سەرناو
+    const mainBook = (item.books && item.books.length) ? item.books[0] : (item.bookName || '');
+    document.getElementById('modal-book-title').textContent = mainBook;
 
-    const rows = [
-      ['📖 کتێب',            item.bookName        || '---'],
-      ['👨‍🏫 مامۆستا',         item.teacherName     || '---'],
-      ['📍 شوێنی مامۆستا',    item.teacherLocation || '---'],
-      ['🗓️ بەرواری هیجری',    item.hijriDate       || '---'],
-      ['📅 بەرواری زایینی',   item.gregorianDate   || '---'],
-      ['🏅 جۆری ئیجازە',     item.ijazahType      || '---'],
-      ['💬 تێبینی',           item.notes           || '---'],
-    ].filter(([, v]) => v !== '---' || ['💬 تێبینی'].includes);
+    const rows = [];
+
+    // کتێبەکان
+    if (item.books && item.books.length > 1) {
+      rows.push(['📖 کتێبەکان', item.books.join('، ')]);
+    } else {
+      rows.push(['📖 کتێب', item.bookName || item.books?.[0] || '---']);
+    }
+
+    // مامۆستاکان
+    if (item.teachers && item.teachers.length) {
+      if (item.teachers.length === 1) {
+        rows.push(['👨‍🏫 مامۆستا', item.teachers[0].name + (item.teachers[0].location ? ` — ${item.teachers[0].location}` : '')]);
+      } else {
+        rows.push(['👨‍🏫 مامۆستاکان', item.teachers.map(t => t.name + (t.location ? ` (${t.location})` : '')).join('، ')]);
+      }
+    } else {
+      rows.push(['👨‍🏫 مامۆستا', (item.teacherName || '---') + (item.teacherLocation ? ` — ${item.teacherLocation}` : '')]);
+    }
+
+    if (item.hijriDate)    rows.push(['🗓️ بەرواری هیجری',  item.hijriDate]);
+    if (item.gregorianDate) rows.push(['📅 بەرواری زایینی', item.gregorianDate]);
+    if (item.ijazahType)   rows.push(['🏅 جۆری ئیجازە',   item.ijazahType]);
+    if (item.notes)        rows.push(['💬 تێبینی',          item.notes]);
 
     document.getElementById('modal-detail-grid').innerHTML = rows.map(([label, val]) => `
       <div class="detail-row">
