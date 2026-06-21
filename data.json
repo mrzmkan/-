@@ -9,16 +9,6 @@
   },
   "ijazat": [
     {
-      "id": "1",
-      "bookName": "صحیح البخاری",
-      "teacherName": "شێخ عبدالله بن بیه",
-      "teacherLocation": "موریتانیا",
-      "hijriDate": "١٤٣٢/٠٦/١٥",
-      "gregorianDate": "2011-05-18",
-      "ijazahType": "ئیجازەی گشتی",
-      "notes": "ئیجازەی تەواو بۆ روایەت و تەدریس"
-    },
-    {
       "id": "2",
       "bookName": "صحیح مسلم",
       "teacherName": "شێخ یوسف القرضاوی",
