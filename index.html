@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="ckb" dir="rtl">
 <head>
+<script>
+  if (location.hostname === 'mrzmkan.github.io') {
+    location.replace('https://zmkankurdi.pages.dev/');
+  }
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>مامۆستا زمكان</title>
@@ -117,7 +122,7 @@
     /* ─── HERO ─── */
     .hero {
       background: linear-gradient(160deg, var(--emerald) 0%, #0f3d28 100%);
-      padding: 5rem 2rem 4rem;
+      padding: 0rem 1rem 2rem;
       position: relative;
       overflow: hidden;
     }
@@ -540,7 +545,7 @@
       background: var(--emerald);
       color: rgba(255,255,255,.7);
       text-align: center;
-      padding: 2rem;
+      padding: 0rem;
       font-size: .85rem;
     }
     footer strong { color: var(--gold-light); }
@@ -566,11 +571,6 @@
 <body>
 
   <!-- TOPBAR -->
-  <div class="topbar">
-    <span>📍 سلێمانی، کوردستان</span>
-    <a href="admin.html">⚙️ په‌ناڵی بەڕێوەبردن</a>
-  </div>
-
   <!-- NAVBAR -->
   <nav>
     <div class="nav-inner">
@@ -621,8 +621,8 @@
     </div>
     <div class="filter-row">
       <button class="filter-btn active" data-filter="all">هەموو</button>
-      <button class="filter-btn" data-filter="ئیجازەی گشتی">ئیجازەی گشتی</button>
-      <button class="filter-btn" data-filter="ئیجازەی تەخصوصی">ئیجازەی تەخصوصی</button>
+      <button class="filter-btn" data-filter="ئیجازەی عام">ئیجازەی عام</button>
+      <button class="filter-btn" data-filter="ئیجازەی خاص">ئیجازەی خاص</button>
     </div>
     <p class="search-count" id="search-count"></p>
   </section>
@@ -658,10 +658,7 @@
 
   <footer>
     <p>
-      داڕێژراو بۆ <strong id="footer-name">زانای کوردی</strong><br/>
-      <a href="admin.html">پەنالی بەڕێوەبردن</a>
-      &nbsp;•&nbsp;
-      <a href="https://github.com" target="_blank">GitHub</a>
+      گه‌شه‌پێده‌ر <strong id="footer-name">Arkan Dara</strong><br/>
     </p>
   </footer>
 
@@ -840,8 +837,8 @@
   function getTypeClass(type) {
     if (!type) return 'type-default';
     if (type.includes('گشتی'))    return 'type-general';
-    if (type.includes('تەخصوصی')) return 'type-special';
-    if (type.includes('بەبرواری')) return 'type-certified';
+    if (type.includes('خاص')) return 'type-special';
+    if (type.includes('')) return 'type-certified';
     return 'type-default';
   }
 
