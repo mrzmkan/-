@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>پەنەلی بەڕێوەبردن — ئارشیڤی ئیجازات</title>
+  <title>پەناڵی بەڕێوەبردنی بنكه‌ی ده‌ستكاریكردن </title>
 
   <style id="cairo-font">
 @font-face {
@@ -679,8 +679,8 @@
   <div id="login-screen">
     <div class="login-card">
       <div class="login-logo">☽</div>
-      <h1>پەنەلی بەڕێوەبردن</h1>
-      <p>ئارشیڤی ئیجازاتی زانایانە</p>
+      <h1>پەناڵی بەڕێوەبردن</h1>
+      <p>پێگه‌ی فه‌رمی مامۆستا زمكان حه‌مید الكوردی/p>
 
       <div class="login-error" id="login-error">
         ⚠️ ناوی بەکارهێنەر یان پاسۆرد هەڵەیە
@@ -697,7 +697,7 @@
 
       <button class="btn-login" id="btn-login">چوونەژوورەوە →</button>
 
-      <p class="login-footer-note">ئارشیڤی ئیجازاتی زانایانە · کوردستان</p>
+      <p class="login-footer-note"> بنكه‌ی زیادكردن و نیشاندان- به‌ وریاییه‌وه‌ ده‌ستكاری بكه‌ </p>
     </div>
   </div>
 
@@ -706,18 +706,18 @@
     <div class="sidebar-logo">
       <span class="icon">☽</span>
       <div>
-        <h1>ئارشیڤی ئیجازات</h1>
-        <span>پەنەلی بەڕێوەبردن</span>
+        <h1>بنكه‌ی زیادكردن و نیشاندانی ئیجازه‌ و سه‌نه‌ده‌كان </h1>
+        <span>پەناڵی بەڕێوەبردن</span>
       </div>
     </div>
 
     <nav class="sidebar-nav">
-      <div class="nav-section-label">پەیجەکان</div>
+      <div class="nav-section-label">تابه‌كان</div>
       <div class="nav-item active" data-panel="panel-records">
-        <span class="nav-icon">📋</span> ئیجازاتەکان
+        <span class="nav-icon">📋</span> ئیجازه‌ و سه‌نه‌ده‌كان
       </div>
       <div class="nav-item" data-panel="panel-scholar">
-        <span class="nav-icon">👤</span> پرۆفایلی زانا
+        <span class="nav-icon">👤</span> پرۆفایلی مامۆستا زمكان
       </div>
       <div class="nav-section-label">ڕێکخستن</div>
       <div class="nav-item" data-panel="panel-settings">
@@ -735,10 +735,10 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
-      <h2 id="topbar-title">ئیجازاتەکان</h2>
+      <h2 id="topbar-title">ئیجازه‌ و سه‌نه‌ده‌كان</h2>
       <div class="topbar-actions">
         <span id="topbar-status"></span>
-        <a href="index.html" class="btn btn-ghost btn-sm">← مالپەڕ</a>
+        <a href="index.html" class="btn btn-ghost btn-sm">← پێگه‌</a>
         <button class="btn-logout" id="btn-logout">🚪 دەرچوون</button>
       </div>
     </div>
@@ -766,7 +766,7 @@
               </tr>
             </thead>
             <tbody id="records-tbody">
-              <tr><td colspan="6" class="table-empty">بارکردنی زانیاریەکان...</td></tr>
+              <tr><td colspan="6" class="table-empty">بارکردنی زانیارییەکان...</td></tr>
             </tbody>
           </table>
         </div>
@@ -776,7 +776,7 @@
     <!-- ══ PANEL: SCHOLAR ══ -->
     <div class="panel" id="panel-scholar">
       <div class="scholar-form">
-        <h3>👤 زانیاری پرۆفایلی زانا</h3>
+        <h3>👤  پرۆفایلی مامۆستا</h3>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">ناوی تەواو</label>
@@ -784,12 +784,12 @@
           </div>
           <div class="form-group">
             <label class="form-label">پلەی زانستی</label>
-            <input type="text" class="form-input" id="sch-title" placeholder="زانای قورئانی..." />
+            <input type="text" class="form-input" id="sch-title" placeholder="مامۆستا " />
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">باسی کورت</label>
-          <textarea class="form-textarea" id="sch-bio" rows="4" placeholder="باسی کورت دەربارەی زانا..."></textarea>
+          <textarea class="form-textarea" id="sch-bio" rows="4" placeholder="باسی کورت دەربارەی مامۆستا ..."></textarea>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -813,7 +813,7 @@
     <div class="panel" id="panel-settings">
 
       <div class="settings-card">
-        <h3>🔑 ڕێکخستنی GitHub</h3>
+        <h3>🔑 setting GitHub</h3>
         <div class="conn-status" id="conn-status"></div>
 
         <div class="form-group">
@@ -827,16 +827,16 @@
           <p class="form-hint">ناوی ڕیپۆزتری کە مالپەڕەکەت تێدایە</p>
         </div>
         <div class="form-group">
-          <label class="form-label">ناوی فایلی داتا</label>
+          <label class="form-label"> فایلی داتابه‌یس</label>
           <input type="text" class="form-input" id="cfg-file" value="data.json" dir="ltr" />
         </div>
         <div class="form-group">
           <label class="form-label">GitHub Personal Access Token (PAT)
-            <span style="color:var(--red);font-weight:400;"> — پێویستە</span>
+            <span style="color:var(--red);font-weight:400;"> — ئه‌بێ هه‌بێت گه‌ر تێكچوو پێم بڵێره‌وه‌</span>
           </label>
           <input type="password" class="form-input" id="cfg-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" dir="ltr" autocomplete="off" />
           <p class="form-hint">
-            تۆکێنی دەستڕاگەیشتن دروستبکە لە
+            تۆکێنی ده‌بێت هه‌بێت
             <a href="https://github.com/settings/tokens/new" target="_blank">GitHub → Settings → Developer settings → Personal Access Tokens → Tokens (classic)</a><br/>
             پێویستە <strong>repo</strong> چێکباندرێت (خانەی <code>repo</code> تیک بکەوە).
             تۆکێنەکە تەنها یەکجار نیشاندەدرێت — کۆپیش بکە.
@@ -1020,7 +1020,7 @@
   // ═══════════════════════════════════════════════════════════
   const PANEL_TITLES = {
     'panel-records':  'ئیجازاتەکان',
-    'panel-scholar':  'پرۆفایلی زانا',
+    'panel-scholar':  'پرۆفایل',
     'panel-settings': 'ڕێکخستنەکان',
   };
 
@@ -1122,7 +1122,7 @@
 
   async function pushDataToGitHub(commitMsg = 'Update data.json via admin panel') {
     if (!cfg.owner || !cfg.repo || !cfg.token) {
-      throw new Error('ڕێکخستنەکان ناقەدن.');
+      throw new Error('ڕێکخستنەکان دروست نه‌كراون.');
     }
     const url     = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.file}`;
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(allData, null, 2))));
@@ -1215,7 +1215,7 @@
       specialization: getVal('sch-specialization'),
       photo:          getVal('sch-photo'),
     };
-    await saveThenToast('بەروارکردنی پرۆفایلی زانا', 'پرۆفایلی زانا تازەکرایەوە ✅');
+    await saveThenToast('ئه‌بده‌یتكردنه‌وه‌ی پرۆفایلی مامۆستا', 'پرۆفایلی مامۆستا تازەکرایەوە ✅');
   });
 
   // ═══════════════════════════════════════════════════════════
@@ -1569,7 +1569,7 @@
     } else if (cfg.owner && cfg.repo && !cfg.token) {
       el.innerHTML = `<span class="status-badge status-pending" style="font-size:.78rem;">🔑 تۆکێن داخڵ بکە</span>`;
     } else {
-      el.innerHTML = `<span class="status-badge status-error" style="font-size:.78rem;">⚠️ ڕێکخستن ناقەدن</span>`;
+      el.innerHTML = `<span class="status-badge status-error" style="font-size:.78rem;">⚠️ ڕێکخستن نه‌كراوه‌</span>`;
     }
   }
 
