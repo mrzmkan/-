@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zmkankurdi.pages.dev/sitemap.xml
