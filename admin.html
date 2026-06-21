@@ -895,6 +895,9 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-ghost" id="record-modal-cancel">پاشگەزبوون</button>
+        <button class="btn btn-gold" id="btn-save-and-add-another" style="display:none;">
+          <span>＋</span> ئیجازەیەکی تر
+        </button>
         <button class="btn btn-primary" id="btn-save-record">
           <span id="save-btn-icon">💾</span>
           <span id="save-btn-text">پاشەکەوتکردن</span>
@@ -1271,6 +1274,7 @@
     editingId = null;
     document.getElementById('record-modal-title').textContent = 'زیادکردنی ئیجازەی نوێ';
     clearRecordForm();
+    document.getElementById('btn-save-and-add-another').style.display = '';
     openModal('record-modal');
   }
 
@@ -1298,6 +1302,7 @@
       : (item.teacherName ? [{ name: item.teacherName, location: item.teacherLocation || '' }] : [{ name: '', location: '' }]);
     teachers.forEach(t => addTeacherRow(t.name, t.location));
 
+    document.getElementById('btn-save-and-add-another').style.display = 'none';
     openModal('record-modal');
   }
 
@@ -1311,46 +1316,124 @@
 
   document.getElementById('btn-add-new').addEventListener('click', openAddModal);
 
-  document.getElementById('btn-save-record').addEventListener('click', async () => {
+  // ئیجازەکانی نوێ کە هێشتا GitHub نەچوونە — بەستەری مێمۆری
+  let pendingNewRecords = [];
+
+  function collectCurrentForm() {
     const books    = getBooksFromForm();
     const teachers = getTeachersFromForm();
     const type     = getVal('rec-type').trim();
+    if (!books.length || !teachers.length || !type) return null;
+    return {
+      id:              Date.now().toString() + Math.random().toString(36).slice(2,6),
+      books,
+      teachers,
+      bookName:        books[0],
+      teacherName:     teachers[0].name,
+      teacherLocation: teachers[0].location,
+      gregorianDate:   getVal('rec-gregorian').trim(),
+      ijazahType:      type,
+      notes:           getVal('rec-notes').trim(),
+    };
+  }
 
-    if (!books.length || !teachers.length || !type) {
+  function updatePendingBadge() {
+    const btn  = document.getElementById('btn-save-record');
+    const icon = document.getElementById('save-btn-icon');
+    const text = document.getElementById('save-btn-text');
+    if (icon) icon.innerHTML = '💾';
+    if (text) {
+      const n = pendingNewRecords.length;
+      text.textContent = n > 0
+        ? `پاشەکەوتکردنی ${n + 1} ئیجازە`
+        : 'پاشەکەوتکردن';
+    }
+  }
+
+  // دوگمەی "ئیجازەیەکی تر" — تەنها لە مێمۆریدا زیاد بکات
+  document.getElementById('btn-save-and-add-another').addEventListener('click', () => {
+    const record = collectCurrentForm();
+    if (!record) {
       toast('⚠️ خانەی ستێرەدار پرکەوە (کتێب، مامۆستا، جۆر)', 'error');
+      return;
+    }
+    pendingNewRecords.push(record);
+    toast(`✔️ ئیجازە ${pendingNewRecords.length} تۆمارکرا — ئیجازەی دیکە بنووسە`, 'info');
+    clearRecordForm();
+    updatePendingBadge();
+  });
+
+  // دوگمەی "پاشەکەوتکردن" — یەکجار هەمووی بنێرێت GitHub
+  document.getElementById('btn-save-record').addEventListener('click', async () => {
+    if (editingId) {
+      // حاڵەتی دەستکاری — وەکو پێشەوە
+      const books    = getBooksFromForm();
+      const teachers = getTeachersFromForm();
+      const type     = getVal('rec-type').trim();
+      if (!books.length || !teachers.length || !type) {
+        toast('⚠️ خانەی ستێرەدار پرکەوە (کتێب، مامۆستا، جۆر)', 'error');
+        return;
+      }
+      setBtnLoading('btn-save-record', true);
+      try {
+        const record = {
+          id: editingId,
+          books, teachers,
+          bookName:        books[0],
+          teacherName:     teachers[0].name,
+          teacherLocation: teachers[0].location,
+          gregorianDate:   getVal('rec-gregorian').trim(),
+          ijazahType:      type,
+          notes:           getVal('rec-notes').trim(),
+        };
+        const idx = allData.ijazat.findIndex(i => i.id === editingId);
+        if (idx !== -1) allData.ijazat[idx] = record;
+        const bookLabel = books.length > 1 ? `${books[0]} (+${books.length - 1})` : books[0];
+        await pushDataToGitHub(`ویرایش ئیجازە: ${bookLabel}`);
+        closeModal('record-modal');
+        renderTable();
+        toast('✅ ئیجازەکە نوێکرایەوە', 'success');
+        editingId = null;
+      } catch (e) {
+        toast('❌ هەڵە: ' + e.message, 'error');
+      } finally {
+        setBtnLoading('btn-save-record', false);
+      }
+      return;
+    }
+
+    // حاڵەتی زیادکردن — کۆکردنەوەی ئیجازەی ئاخری + هەموو pending
+    const lastRecord = collectCurrentForm();
+    if (!lastRecord && pendingNewRecords.length === 0) {
+      toast('⚠️ خانەی ستێرەدار پرکەوە (کتێب، مامۆستا، جۆر)', 'error');
+      return;
+    }
+
+    const toSave = lastRecord
+      ? [...pendingNewRecords, lastRecord]
+      : [...pendingNewRecords];
+
+    if (toSave.length === 0) {
+      toast('⚠️ هیچ ئیجازەیەک نیە بۆ پاشەکەوتکردن', 'error');
       return;
     }
 
     setBtnLoading('btn-save-record', true);
     try {
-      const record = {
-        id:            editingId || Date.now().toString(),
-        // مۆدێلی نوێ
-        books,
-        teachers,
-        // پشتگیری پێشووی — تەنها یەکەم تۆمار
-        bookName:        books[0],
-        teacherName:     teachers[0].name,
-        teacherLocation: teachers[0].location,
-        gregorianDate:   getVal('rec-gregorian').trim(),
-        ijazahType:      type,
-        notes:           getVal('rec-notes').trim(),
-      };
-
-      if (editingId) {
-        const idx = allData.ijazat.findIndex(i => i.id === editingId);
-        if (idx !== -1) allData.ijazat[idx] = record;
-      } else {
-        allData.ijazat.push(record);
-      }
-
-      const bookLabel = books.length > 1 ? `${books[0]} (+${books.length - 1})` : books[0];
-      await pushDataToGitHub(editingId ? `ویرایش ئیجازە: ${bookLabel}` : `زیادکردنی ئیجازە: ${bookLabel}`);
+      toSave.forEach(r => allData.ijazat.push(r));
+      const n = toSave.length;
+      const commitMsg = n > 1
+        ? `زیادکردنی ${n} ئیجازەی نوێ`
+        : `زیادکردنی ئیجازە: ${toSave[0].bookName}`;
+      await pushDataToGitHub(commitMsg);
+      pendingNewRecords = [];
       closeModal('record-modal');
       renderTable();
-      toast(editingId ? '✅ ئیجازەکە نوێکرایەوە' : '✅ ئیجازەی نوێ زیادکرا', 'success');
+      toast(`✅ ${n} ئیجازە پاشەکەوتکرا`, 'success');
       editingId = null;
     } catch (e) {
+      // ئەگەر هەڵە بوو، ئیجازەکانی زیادکراو دووبارە لابەرە
+      allData.ijazat.splice(allData.ijazat.length - toSave.length, toSave.length);
       toast('❌ هەڵە: ' + e.message, 'error');
     } finally {
       setBtnLoading('btn-save-record', false);
@@ -1400,14 +1483,28 @@
     document.body.style.overflow = '';
   }
 
-  document.getElementById('record-modal-close').addEventListener('click',  () => closeModal('record-modal'));
-  document.getElementById('record-modal-cancel').addEventListener('click', () => closeModal('record-modal'));
+  function closeRecordModal() {
+    closeModal('record-modal');
+    if (!editingId) {
+      pendingNewRecords = [];
+      updatePendingBadge();
+    }
+  }
+
+  document.getElementById('record-modal-close').addEventListener('click',  () => closeRecordModal());
+  document.getElementById('record-modal-cancel').addEventListener('click', () => closeRecordModal());
   document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+    m.addEventListener('click', e => {
+      if (e.target === m) {
+        if (m.id === 'record-modal') closeRecordModal();
+        else closeModal(m.id);
+      }
+    });
   });
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-      ['record-modal','confirm-modal'].forEach(id => closeModal(id));
+      closeRecordModal();
+      closeModal('confirm-modal');
     }
   });
 
@@ -1451,12 +1548,15 @@
   }
 
   function setBtnLoading(id, loading) {
-    const btn     = document.getElementById(id);
-    const iconEl  = document.getElementById('save-btn-icon');
-    const textEl  = document.getElementById('save-btn-text');
-    btn.disabled  = loading;
-    if (iconEl) iconEl.innerHTML = loading ? '<span class="spinner-inline"></span>' : '💾';
-    if (textEl) textEl.textContent = loading ? 'پاشەکەوتکردن...' : 'پاشەکەوتکردن';
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = loading;
+    if (id === 'btn-save-record') {
+      const iconEl = document.getElementById('save-btn-icon');
+      const textEl = document.getElementById('save-btn-text');
+      if (iconEl) iconEl.innerHTML = loading ? '<span class="spinner-inline"></span>' : '💾';
+      if (textEl) textEl.textContent = loading ? 'پاشەکەوتکردن...' : (textEl.textContent || 'پاشەکەوتکردن');
+    }
   }
 
   // ═══════════════════════════════════════════════════════════
