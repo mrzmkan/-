@@ -8,8 +8,8 @@
 </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>مامۆستا زمكان</title>
-  <meta name="description" content="ئارشیڤی ئیجازات و مستەنداتی زانای کوردی" />
+  <title>مامۆستا زمكان حمید الكوردی</title>
+  <meta name="description" content="ئیجازه‌ و سه‌نه‌ده‌كانی مامۆستا زمكان حمید الكوردی" />
 
   <!-- Fonts: Noto Naskh Arabic for Kurdish/Arabic, and Amiri for display -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -576,11 +576,11 @@
     <div class="nav-inner">
       <a href="#" class="nav-logo">
         <span class="logo-icon">☽</span>
-ئیجازه‌ و سه‌نه‌ده‌كانی مامۆستا زمكان      </a>
+ئیجازه‌ و سه‌نه‌ده‌كانی مامۆستا زمكان حمید الكوردی      </a>
       <ul class="nav-links">
         <li><a href="#hero" class="active">سەرەکی</a></li>
         <li><a href="#search">گەڕان</a></li>
-        <li><a href="#ijazat">ئیجازاتەکان</a></li>
+        <li><a href="#ijazat">ئیجازه‌ و سه‌نه‌ده‌كان</a></li>
       </ul>
     </div>
   </nav>
@@ -591,10 +591,10 @@
       <div class="hero-text">
         <h1>
          <br/>
-          <span id="scholar-name">بارگەی ئیجازاتی زانا</span>
+          <span id="scholar-name">بارگەی ئیجازاتی مامۆستا زمكان</span>
         </h1>
-        <p class="hero-subtitle" id="scholar-title">زانای قورئانی و مرۆڤی مستەند</p>
-        <p class="hero-bio" id="scholar-bio">... بارکردنی زانیاری ...</p>
+        <p class="hero-subtitle" id="scholar-title">زانای زمانی عه‌ره‌بی و مامۆستای ئاینی</p>
+        <p class="hero-bio" id="scholar-bio">... بارکردنی زانیارییه‌كان ...</p>
         <div class="hero-stats">
           <span class="stat-pill">📚 <span id="count-total">٠</span> ئیجازە</span>
           <span class="stat-pill">👨‍🏫 <span id="count-teachers">٠</span> مامۆستا</span>
@@ -630,7 +630,7 @@
   <!-- MAIN -->
   <main>
     <div class="section-header" id="ijazat">
-      <h2>ئیجازاتەکان</h2>
+      <h2>ئیجازه‌كان</h2>
       <span class="section-badge" id="badge-count">٠</span>
       <div class="section-line"></div>
     </div>
@@ -780,7 +780,7 @@
         <div class="empty-state">
           <div class="empty-icon">📭</div>
           <h3>ئیجازەیەک نەدوزرایەوە</h3>
-          <p>گەڕانەکەت گۆڕ بکە یان فلتەر لادەبە.</p>
+          <p>گەڕانەکەت بگۆڕه‌  یان فلتەر لابە.</p>
         </div>`;
       document.getElementById('badge-count').textContent = '٠';
       return;
@@ -836,7 +836,7 @@
 
   function getTypeClass(type) {
     if (!type) return 'type-default';
-    if (type.includes('گشتی'))    return 'type-general';
+    if (type.includes('عام'))    return 'type-general';
     if (type.includes('خاص')) return 'type-special';
     if (type.includes('')) return 'type-certified';
     return 'type-default';
