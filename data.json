@@ -9,29 +9,6 @@
   },
   "ijazat": [
     {
-      "id": "17820227352150ns0",
-      "books": [
-        "أربعين النووي",
-        "صحيح الجامع"
-      ],
-      "teachers": [
-        {
-          "name": "م دلير",
-          "location": ""
-        },
-        {
-          "name": "م كمال",
-          "location": ""
-        }
-      ],
-      "bookName": "أربعين النووي",
-      "teacherName": "م دلير",
-      "teacherLocation": "",
-      "gregorianDate": "2022-03-02",
-      "ijazahType": "ئیجازەی عام",
-      "notes": ""
-    },
-    {
       "id": "1782022770601kqaj",
       "books": [
         "تجويد"
